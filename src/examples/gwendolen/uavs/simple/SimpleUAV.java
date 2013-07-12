@@ -22,7 +22,7 @@
 //
 //----------------------------------------------------------------------------
 
-package gwendolen.uavs.prism;
+package gwendolen.uavs.simple;
 
 import java.util.Set;
 
@@ -31,8 +31,6 @@ import ail.mas.vehicle.Vehicle;
 import ail.semantics.AILAgent;
 import ail.syntax.Predicate;
 
-import gwendolen.uavs.simple.SimpleRadar;
-
 public class SimpleUAV extends Vehicle {
 	
 	public SimpleUAV(AILAgent a) {
@@ -40,7 +38,6 @@ public class SimpleUAV extends Vehicle {
 		addAgent(a);
 		a.setEnv(this);
 		addSensor(new SimpleRadar());
-		addSensor(new navMan());
 	}
 	
 		

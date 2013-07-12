@@ -22,26 +22,17 @@
 //
 //----------------------------------------------------------------------------
 
-package gwendolen.uavs.prism;
+package gwendolen.uavs.simple;
 
-import java.util.Set;
-
-import ail.mas.vehicle.Vehicle;
-
-import ail.semantics.AILAgent;
+import ail.mas.vehicle.UnreliableSensor;
 import ail.syntax.Predicate;
+import java.util.ArrayList;
 
-import gwendolen.uavs.simple.SimpleRadar;
-
-public class SimpleUAV extends Vehicle {
-	
-	public SimpleUAV(AILAgent a) {
-		super();
-		addAgent(a);
-		a.setEnv(this);
-		addSensor(new SimpleRadar());
-		addSensor(new navMan());
+public class SimpleRadar extends UnreliableSensor {
+	public SimpleRadar() {
+		super("Radar");
+		ArrayList<Predicate> ls = new ArrayList<Predicate>();
+		ls.add(new Predicate("collision"));
+		detectOccurs(new Predicate("collision"), ls, 0.9);
 	}
-	
-		
 }
