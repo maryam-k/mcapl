@@ -48,6 +48,7 @@ import lejos.robotics.navigation.DifferentialPilot;
 
 import java.io.PrintStream;
 
+import ail.syntax.NumberTermImpl;
 
 /**
  * A simple environment for NXT Robots including sub-classes for two robot builds.  We need a more generic way of representing different robots
@@ -106,7 +107,7 @@ public class LegoRoverEnvironment_RuleP extends EASSNXTEnvironment {
 	}
 	
 	/**
-	 * Create the relevant object for the robot.
+	 * Create the relevant o4bject for the robot.
 	 */
 	public LegoRobot createRobot(String agent) {
 		LegoRobot robot;
@@ -166,6 +167,21 @@ public class LegoRoverEnvironment_RuleP extends EASSNXTEnvironment {
 		   		if (robot.hasPilot()) {
 		   			robot.getPilot().travel(10);
 		   		}
+		   	/* //test
+		   	} else if (act.getFunctor().equals("turn")) {
+		   		if (robot.hasPilot()) {
+		   			robot.getPilot().rotate(90);
+		   		} */
+		   		
+		   		else if (act.getFunctor().equals("turn")) {
+			   		if (robot instanceof Noor) {
+			   			((Noor) robot).setRotation((int) ((NumberTerm) act.getTerm(0)).solve());
+			   		}
+			   		if (robot instanceof Claudia) {
+			   			((Claudia) robot).setRotation((int) ((NumberTerm) act.getTerm(0)).solve());
+			   		}
+		   		
+		   		
 		   	} else if (act.getFunctor().equals("rule1")) {
 		   		if (!rule1) {
 		   			addSharedBelief(rname, activer1);
@@ -461,13 +477,18 @@ public class LegoRoverEnvironment_RuleP extends EASSNXTEnvironment {
 				
 				RemoteMotor motorLeft = brick.getMotorC();
 				RemoteMotor motorRight = brick.getMotorA();
-				pilot = new  DifferentialPilot(3, 15, motorLeft, motorRight);
+				pilot = new  DifferentialPilot(5.6, 8.8, motorLeft, motorRight); //Edit by BenScotland wheel spacing and diameter correction
 				pilot.setTravelSpeed(10);
 				pilot.setRotateSpeed(15);
 				setPilot(pilot);
 			}
 		}
 		
+		public void setRotation(int solve) {
+			// TODO Auto-generated method stub
+			
+		}
+
 		/**
 		 * Grab the print stream from the ultrasonic sensor.
 		 * @param s
@@ -548,6 +569,11 @@ public class LegoRoverEnvironment_RuleP extends EASSNXTEnvironment {
 			}
 		}
 		
+		public void setRotation(int solve) {
+			// TODO Auto-generated method stub
+			
+		}
+
 		/**
 		 * Set the travel speed.
 		 * @param speed

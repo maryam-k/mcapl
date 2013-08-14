@@ -56,6 +56,8 @@ import ail.mas.AIL;
 import ail.mas.MAS;
 import ajpf.MCAPLcontroller;
 
+import  ail.syntax.NumberTermImpl;
+
 /**
  * This sets up a user interface for the remote operation of Lego Rovers.  It is intended primarily for use with school children.
  * Further information can be found at: http://cgi.csc.liv.ac.uk/~lad/legorovers/
@@ -66,10 +68,10 @@ public class LegoRoverUI_RuleP extends JPanel implements ActionListener, WindowL
 		private static final long serialVersionUID = 1L;
 		
 		// The various buttons and boxes used by the interface.
-	    protected JButton fbutton, rbutton, lbutton, sbutton, delaybutton, r90button, l90button, bbutton;
+	    protected JButton fbutton, rbutton, lbutton, sbutton, delaybutton, r90button, l90button, bbutton, dbutton; //dbutton added
 	    protected JCheckBox r1button, r2button, r3button;
 	    protected JComboBox delaybox;
-	    protected JFormattedTextField speedbox, rspeedbox, distancebox, soundbox, lightbox;
+	    protected JFormattedTextField speedbox, rspeedbox, distancebox, soundbox, lightbox, dbox; //dbox added By BenScotland
 	    protected TextAreaOutputStream uvalues, svalues, lvalues;
 	    protected NumberFormat numberFormat;
 	    //
@@ -78,8 +80,24 @@ public class LegoRoverUI_RuleP extends JPanel implements ActionListener, WindowL
 	    // 13000 = 1.3s = Earth-Moon delay
 	    // 180000 = 3 min = Earth-Mars delay
 	    protected String[] delays = {"0","500","1000","1300","180000"};
-	    protected String[] events = {"obstacle", "obstacle_at_back", "mineral"};
-	    protected String[] actions = {"do_nothing", "stop", "backward10", "right90", "left90", "forward", "forward10"};
+	    
+	    protected String[] events = {"Obstacle Ahead", "Obstacle Behind", "Mineral Found"};
+	    /*obstacle changed to Obstacle Ahead
+	     *obstacle_at_back changed to Obstacle Behind
+	     * mineral changed to Mineral Found
+	     * By BenScotland
+	     */
+	    protected String[] actions = {"do_nothing", "stop", "backward10", "right90", "left90", "forward", "forward10"}; 
+	    /*could not change the following although I believe it is needed
+	     * do_nothing changed to Do Nothing
+	     * stop changed to Stop
+	     * backward10 changed to Backward 10 cm
+	     * right90 changed to Right 90°
+	     * left90 changed to Left 90°
+	     * forward changed to Forward 
+	     * forward 10 changed to Forward 10 cm
+	     * By BenScotland
+	     */
 	    
 	    // The delay before instructions reach the robot, the environment and the default robot name.
 	    protected int delay = 0;
@@ -112,7 +130,7 @@ public class LegoRoverUI_RuleP extends JPanel implements ActionListener, WindowL
 	    	// ---------- Components of the Settings box
 	    	
 	    	// Delay
-	    	JLabel dtext = new JLabel("Delay:");
+	    	JLabel dtext = new JLabel("Delay in ms: ");				//Delay :  changed to Delay in ms:  By BenScotland
 	    	settings.add(dtext);
 	    	delaybox = new JComboBox(delays);
 	    	delaybox.setActionCommand("delay");
@@ -161,7 +179,7 @@ public class LegoRoverUI_RuleP extends JPanel implements ActionListener, WindowL
 	        controls.add(fbutton, c);
 	    	
 	        // Right
-	        rbutton = new JButton("Right");
+	        rbutton = new JButton("Turn Right");		//Right changed to Turn Right By BenScotland
 	        rbutton.setMnemonic(KeyEvent.VK_R);
 	        rbutton.setActionCommand("right");
 	        rbutton.addActionListener(this);
@@ -171,7 +189,7 @@ public class LegoRoverUI_RuleP extends JPanel implements ActionListener, WindowL
 	        controls.add(rbutton, c);
 
 	        // Left
-	        lbutton = new JButton("Left");
+	        lbutton = new JButton("Turn Left");			//Left changed to Turn Left By BenScotland
 	        lbutton.setMnemonic(KeyEvent.VK_L);
 	        lbutton.setActionCommand("left");
 	        lbutton.addActionListener(this);
@@ -181,17 +199,45 @@ public class LegoRoverUI_RuleP extends JPanel implements ActionListener, WindowL
 	        controls.add(lbutton, c);
 	        
 	        // Stop
-	        sbutton = new JButton("Stop");
+	        sbutton = new JButton("Stop");				//stop button moved to provide space for degree
 	        sbutton.setMnemonic(KeyEvent.VK_S);
 	        sbutton.setActionCommand("stop");
 	        sbutton.addActionListener(this);
 	        sbutton.setToolTipText("Click to Stop");
 	        c.gridx = 3;
-	        c.gridy = 0;
+	        c.gridy = 1;
 	        controls.add(sbutton, c);
+	       
+	      // Degree added as trial
+	        //button for degree
+	        dbutton = new JButton("Turn");
+	        dbutton.setMnemonic(KeyEvent.VK_T);
+	        dbutton.setActionCommand("turn");
+	        dbutton.addActionListener(this);
+	        dbutton.setToolTipText("Click to turn");
+	        c.gridx = 5;
+	        c.gridy = 0;
+	        controls.add(dbutton, c);
+	    	
+	        //Label for degree
+	        JLabel ptext = new JLabel(" Angle of Rotation: ");
+	    	c.gridx = 3;
+	    	c.gridy = 0;
+	    	controls.add(ptext, c);
+	    	
+	    	//box for degree
+	    	NumberFormat f11 = NumberFormat.getIntegerInstance(); 
+	    	f11.setMaximumIntegerDigits(3);
+	    	dbox = new JFormattedTextField(f11);
+	    	dbox.setValue(15);
+	    	dbox.setColumns(3);
+	    	dbox.addPropertyChangeListener(this);
+	    	c.gridx = 4;
+		    c.gridy = 0;
+		    controls.add(dbox, c);          
 	        
 	        // Reverse
-	        bbutton = new JButton("Reverse (10 revs)");
+	        bbutton = new JButton("Reverse 10 cm");		//Reverse (10 revs) changed to Reverse 10 cm By BenScotland
 	        bbutton.setMnemonic(KeyEvent.VK_S);
 	        bbutton.setActionCommand("backward10");
 	        bbutton.addActionListener(this);
@@ -201,7 +247,7 @@ public class LegoRoverUI_RuleP extends JPanel implements ActionListener, WindowL
 	        controls.add(bbutton, c);
 
 	        // Right 90
-	        r90button = new JButton("Right (90 degrees)");
+	        r90button = new JButton("Right (90°)");		//right (90 degrees) changed to Right (90°) By BenScotland
 	        r90button.setActionCommand("right90");
 	        r90button.addActionListener(this);
 	        r90button.setToolTipText("Click to turn Right 90 degrees");
@@ -210,7 +256,7 @@ public class LegoRoverUI_RuleP extends JPanel implements ActionListener, WindowL
 	        controls.add(r90button, c);
 
 	        // Left 90
-	        l90button = new JButton("Left (90 degrees)");
+	        l90button = new JButton("Left (90°)");		//left (90 degrees) changed to Left (90°) By BenScotland
 	        l90button.setActionCommand("left90");
 	        l90button.addActionListener(this);
 	        l90button.setToolTipText("Click to turn Left 90 degrees");
@@ -228,7 +274,7 @@ public class LegoRoverUI_RuleP extends JPanel implements ActionListener, WindowL
 	    	add(rules, c);
 
 	    	// Rule 1
-	    	r1button = new JCheckBox("rule1:");
+	    	r1button = new JCheckBox("Rule 1:");			//rule1: changed to Rule 1: By BenScotland
 	        r1button.setActionCommand("rule1");
 	        r1button.addActionListener(this);
 	        r1button.setToolTipText("Activate rule 1");
@@ -236,7 +282,7 @@ public class LegoRoverUI_RuleP extends JPanel implements ActionListener, WindowL
 	        c.gridy = 0;
 	        c.gridwidth = 1;
 	        rules.add(r1button, c);
-	        JLabel r1 = new JLabel("if you Believe"); 
+	        JLabel r1 = new JLabel("If you Believe");			//if you Believe changed to If you Believe By BenScotland
 	        c.gridx = 1;
 	        c.gridy = 0;
 	        rules.add(r1, c);
@@ -264,15 +310,15 @@ public class LegoRoverUI_RuleP extends JPanel implements ActionListener, WindowL
 	        rules.add(r1action2box, c);	   
 	        
 	    	// Rule 2
-	    	r2button = new JCheckBox("rule2:");
-	        r2button.setActionCommand("rule2");
+	    	r2button = new JCheckBox("Rule 2:");			//rule2: changed to Rule 2: By BenScotland
+	    	r2button.setActionCommand("rule2");
 	        r2button.addActionListener(this);
 	        r2button.setToolTipText("Activate rule 2");
 	        c.gridx = 0;
 	        c.gridy = 1;
 	        c.gridwidth = 1;
 	        rules.add(r2button, c);
-	        JLabel r2 = new JLabel("if you Believe"); 
+	        JLabel r2 = new JLabel("If you Believe");			//if you Believe changed to If you Believe By BenScotland
 	        c.gridx = 1;
 	        c.gridy = 1;
 	        rules.add(r2, c);
@@ -300,15 +346,15 @@ public class LegoRoverUI_RuleP extends JPanel implements ActionListener, WindowL
 	        rules.add(r2action2box, c);	        
 
 	    	// Rule 3
-	    	r3button = new JCheckBox("rule3:");
-	        r3button.setActionCommand("rule3");
+	    	r3button = new JCheckBox("Rule 3:");				//rule3: changed to Rule 3: By BenScotland
+	    	r3button.setActionCommand("rule3");
 	        r3button.addActionListener(this);
 	        r2button.setToolTipText("Activate rule 3");
 	        c.gridx = 0;
 	        c.gridy = 2;
 	        c.gridwidth = 1;
 	        rules.add(r3button, c);
-	        JLabel r3 = new JLabel("if you Believe"); 
+	        JLabel r3 = new JLabel("If you Believe");			//if you Believe changed to If you Believe By BenScotland
 	        c.gridx = 1;
 	        c.gridy = 2;
 	        rules.add(r3, c);
@@ -345,11 +391,11 @@ public class LegoRoverUI_RuleP extends JPanel implements ActionListener, WindowL
 		    	ultra.setLayout(new GridBagLayout());
 		    	c.gridx = 0;
 		    	c.gridy = 3;
-		        c.gridwidth = 1;
+		        c.gridwidth = 1; 
 		    	add(ultra, c);
 		    	
 		    	// Distance Setting
-		    	JLabel utext = new JLabel("Obstacle Distance:");
+		    	JLabel utext = new JLabel("Obstacle Distance in cm:");		//Obstacle Distance changed to Obstacle Distance in cm By BenScotland
 		    	ultra.add(utext);
 		    	NumberFormat f2 = NumberFormat.getIntegerInstance(); 
 		    	f2.setMaximumIntegerDigits(3);
@@ -360,7 +406,7 @@ public class LegoRoverUI_RuleP extends JPanel implements ActionListener, WindowL
 		    	ultra.add(distancebox);
 		    	
 		    	// Ultrasound Values
-		    	JLabel vtext = new JLabel("Ultrasonic Sensor Values:");
+		    	JLabel vtext = new JLabel("Ultrasonic Sensor Values:"); 
 		    	c.gridx = 0;
 		    	c.gridy = 1;
 		        c.gridwidth = 2;
@@ -652,7 +698,19 @@ public class LegoRoverUI_RuleP extends JPanel implements ActionListener, WindowL
 					System.err.println(ex.getMessage());
 				}
 			}
-						
+			
+			if (source == dbox) {
+				Number speed = (Number) dbox.getValue();
+			
+				Action act = new Action("turn");
+				act.addTerm(new NumberTermImpl(dbox.intValue()));
+			
+				try {
+					env.executeAction(rName, act);
+				} catch (Exception ex) {
+					System.err.println(ex.getMessage());
+				}
+			}						
 		}
 		
 		/*
