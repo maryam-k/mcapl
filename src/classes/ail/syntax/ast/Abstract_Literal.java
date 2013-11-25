@@ -25,7 +25,7 @@
 package ail.syntax.ast;
 
 import gov.nasa.jpf.annotation.FilterField;
-import gov.nasa.jpf.jvm.MJIEnv;
+import gov.nasa.jpf.vm.MJIEnv;
 import ail.syntax.PredicatewAnnotation;
 import ail.syntax.Literal;
 
@@ -179,7 +179,14 @@ public class Abstract_Literal extends Abstract_Pred {
 	 */
 	public int newJPFObject(MJIEnv env) {
 		int ref = env.newObject("ail.syntax.ast.Abstract_Literal");
-		env.setReferenceField(ref, "functor", env.newString(getFunctor()));
+		String functor = getFunctor();
+		if (strings.containsKey(functor)) {
+			env.setReferenceField(ref, "functor", strings.get(functor));
+		} else {
+			int stringref = env.newString(functor);
+			strings.put(functor, stringref);
+			env.setReferenceField(ref, "functor", stringref);
+		}
 		env.setReferenceField(ref, "terms", newJPFTermArray(env));
 		env.setBooleanField(ref, "type", getType());
 		return ref;

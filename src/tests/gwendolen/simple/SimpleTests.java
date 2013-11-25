@@ -29,7 +29,6 @@ import org.junit.Test;
 import ail.util.AJPF_w_AIL;
 
 import gov.nasa.jpf.util.test.TestJPF;
-import gov.nasa.jpf.util.TypeRef;
 
 /**
  * regression test for programming-by-contract annotations
@@ -41,10 +40,6 @@ public class SimpleTests extends TestJPF {
      "+et.print_insn=false",
      "+vm.max_transition_length = MAX"
 };
-//	static final String[] PICKUP_ARGS = {"src/examples/gwendolen/simple/PickUpAgent.jpf",
-//										"+target=gwendolen.simple.SimpleTests"};
-
-
 
   //--- driver to execute single test methods
   public static void main(String[] args) {
@@ -70,145 +65,6 @@ public class SimpleTests extends TestJPF {
      }
   }
   
-
-  
-  @Test //----------------------------------------------------------------------
-  public void testInValidAlwaysNotPickUP () {
-	  if (verifyPropertyViolation(new TypeRef("ajpf.MCAPLListener"), PICKUP_ARGS)) {
-	    	String filename =  "/src/examples/gwendolen/simple/PickUpAgent/PickUpAgent.ail";
-	    	String prop_filename =  "/src/examples/gwendolen/simple/PickUpAgent/PickUpAgent.psl";
-	    	String[] args = new String[3];
-	    	args[0] = filename;
-	    	args[1] = prop_filename;
-	    	args[2] = "1";
-	    	AJPF_w_AIL.run(args);
-	  } else {
-	    	 
-	  }
-  }
-		  
-  @Test //----------------------------------------------------------------------
-  public void testInValidEventuallyRandom () {
-	  if (verifyPropertyViolation(new TypeRef("ajpf.MCAPLListener"), PICKUP_ARGS)) {
-	    	String filename =  "/src/examples/gwendolen/simple/PickUpAgent/PickUpAgent.ail";
-	    	String prop_filename =  "/src/examples/gwendolen/simple/PickUpAgent/PickUpAgent.psl";
-	    	String[] args = new String[3];
-	    	args[0] = filename;
-	    	args[1] = prop_filename;
-	    	args[2] = "7";
-	    	AJPF_w_AIL.run(args);
-	  } else {
-	    	 
-	  }
-  }
-
-  @Test //----------------------------------------------------------------------
-  public void testAlwaysNotBad () {
-	  if (verifyNoPropertyViolation(PICKUP_ARGS)) {
-	    	String filename =  "/src/examples/gwendolen/simple/PickUpAgent/PickUpAgent.ail";
-	    	String prop_filename =  "/src/examples/gwendolen/simple/PickUpAgent/PickUpAgent.psl";
-	    	String[] args = new String[3];
-	    	args[0] = filename;
-	    	args[1] = prop_filename;
-	    	args[2] = "2";
-	    	AJPF_w_AIL.run(args);
-	  } else {
-	    	 
-	  }
-  }
-
-  @Test //----------------------------------------------------------------------
-  public void testActionSequence () {
-	  if (verifyNoPropertyViolation(PICKUP_ARGS)) {
-	    	String filename =  "/src/examples/gwendolen/simple/PickUpAgent/PickUpTwiceAgent.ail";
-	    	String prop_filename =  "/src/examples/gwendolen/simple/PickUpAgent/PickUpAgent.psl";
-	    	String[] args = new String[3];
-	    	args[0] = filename;
-	    	args[1] = prop_filename;
-	    	args[2] = "5";
-	    	AJPF_w_AIL.run(args);
-	  } else {
-	    	 
-	  }
-  }
-
-  @Test //----------------------------------------------------------------------
-  public void testLoopingInValidEventuallyAlwaysNotBlock1 () {
-	  if (verifyPropertyViolation(new TypeRef("ajpf.MCAPLListener"), PICKUP_ARGS)) {
-	    	String filename =  "/src/examples/gwendolen/simple/LoopingAgent/LoopingAgent.ail";
-	    	String prop_filename =  "/src/examples/gwendolen/simple/LoopingAgent/LoopingAgent.psl";
-	    	String[] args = new String[3];
-	    	args[0] = filename;
-	    	args[1] = prop_filename;
-	    	args[2] = "2";
-	    	AJPF_w_AIL.run(args);
-	  } else {
-		    	 
-	  }
-
-  }
-
-  @Test //----------------------------------------------------------------------
-  public void testLoopingInValidAlwaysEventuallyBlock1ANDAlwaysEventuallyBlock2 () {
-	  if (verifyPropertyViolation(new TypeRef("ajpf.MCAPLListener"), PICKUP_ARGS)) {
-	    	String filename =  "/src/examples/gwendolen/simple/LoopingAgent/LoopingAgent.ail";
-	    	String prop_filename =  "/src/examples/gwendolen/simple/LoopingAgent/LoopingAgent.psl";
-	    	String[] args = new String[3];
-	    	args[0] = filename;
-	    	args[1] = prop_filename;
-	    	args[2] = "4";
-	    	AJPF_w_AIL.run(args);
-	  } else {
-		    	 
-	  }
-
-  }
-
-  @Test //----------------------------------------------------------------------
-  public void testEndStateNotMuckingThingsUp () {
-	  if (verifyPropertyViolation(new TypeRef("ajpf.MCAPLListener"), PICKUP_ARGS)) {
-	    	String filename =  "/src/examples/gwendolen/simple/PickUpAgent/TwoPickUpAgents.ail";
-	    	String prop_filename =  "/src/examples/gwendolen/simple/PickUpAgent/PickUpAgent.psl";
-	    	String[] args = new String[3];
-	    	args[0] = filename;
-	    	args[1] = prop_filename;
-	    	args[2] = "8";
-	    	AJPF_w_AIL.run(args);
-	  } else {
-		    	 
-	  }
-
-  }
-  
-  @Test //----------------------------------------------------------------------
-  public void testPropertyInvolvingMessaging () {
-	  if (verifyNoPropertyViolation(PICKUP_ARGS)) {
-	    	String filename =  "/src/examples/gwendolen/simple/MessageAgent/MessageAgents.ail";
-	    	String prop_filename =  "/src/examples/gwendolen/simple/MessageAgent/MessageAgent.psl";
-	    	String[] args = new String[3];
-	    	args[0] = filename;
-	    	args[1] = prop_filename;
-	    	args[2] = "1";
-	    	AJPF_w_AIL.run(args);
-	  } else {
-		    	 
-	  }
-  }
-
-	  @Test //----------------------------------------------------------------------
-	  public void testPropertyInvolvingDroppingGoals () {
-		  if (verifyNoPropertyViolation(PICKUP_ARGS)) {
-		    	String filename =  "/src/examples/gwendolen/simple/DroppingGoals/DroppingGoals.ail";
-		    	String prop_filename =  "/src/examples/gwendolen/simple/DroppingGoals/DroppingGoals.psl";
-		    	String[] args = new String[3];
-		    	args[0] = filename;
-		    	args[1] = prop_filename;
-		    	args[2] = "1";
-		    	AJPF_w_AIL.run(args);
-		  } else {
-			    	 
-		  }
-  }
 
 
 

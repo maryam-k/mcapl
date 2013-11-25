@@ -24,8 +24,9 @@
 
 package ail.syntax.ast;
 
-import gov.nasa.jpf.jvm.MJIEnv;
-import gov.nasa.jpf.jvm.ClassInfo;
+import gov.nasa.jpf.vm.MJIEnv;
+import gov.nasa.jpf.vm.ClassInfo;
+import gov.nasa.jpf.vm.ClassLoaderInfo;
 
 import ail.syntax.Literal;
 import ail.syntax.PredicatewAnnotation;
@@ -137,14 +138,21 @@ public class Abstract_VarTerm extends Abstract_Literal implements Abstract_Numbe
 	 * @see ail.syntax.ast.Abstract_Literal#newJPFObject(gov.nasa.jpf.jvm.MJIEnv)
 	 */
 	public int newJPFObject(MJIEnv env) {
-		ClassInfo ci = ClassInfo.getResolvedClassInfo("ail.syntax.ast.Abstract_VarTerm");
+		ClassInfo ci = ClassLoaderInfo.getCurrentClassLoader().getResolvedClassInfo("ail.syntax.ast.Abstract_VarTerm");
 		if (env.requiresClinitExecution(ci)) {
 			env.repeatInvocation();
 			return 0;
 		}
 		
 		int ref = env.newObject("ail.syntax.ast.Abstract_VarTerm");
-		env.setReferenceField(ref, "functor", env.newString(getFunctor()));
+		String functor = getFunctor();
+		if (Abstract_Predicate.strings.containsKey(functor)) {
+			env.setReferenceField(ref, "functor", Abstract_Predicate.strings.get(functor));
+		} else {
+			int stringref = env.newString(functor);
+			Abstract_Predicate.strings.put(functor, stringref);
+			env.setReferenceField(ref, "functor", stringref);
+		}
 		env.setReferenceField(ref, "terms", newJPFTermArray(env));
 		env.setBooleanField(ref, "type", getType());
 		return ref;

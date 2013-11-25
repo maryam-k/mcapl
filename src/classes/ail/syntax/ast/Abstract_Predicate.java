@@ -29,13 +29,16 @@ import ajpf.psl.ast.Abstract_Formula;
 import ail.syntax.Predicate;
 import ail.syntax.Term;
 
-import gov.nasa.jpf.jvm.ClassInfo;
-import gov.nasa.jpf.jvm.ElementInfo;
-import gov.nasa.jpf.jvm.Heap;
-import gov.nasa.jpf.jvm.JVM;
-import gov.nasa.jpf.jvm.MJIEnv;
-import gov.nasa.jpf.jvm.ThreadInfo;
-import gov.nasa.jpf.jvm.Types;
+import java.util.HashMap;
+
+import gov.nasa.jpf.vm.ClassInfo;
+import gov.nasa.jpf.vm.ClassLoaderInfo;
+import gov.nasa.jpf.vm.ElementInfo;
+import gov.nasa.jpf.vm.Heap;
+import gov.nasa.jpf.vm.VM;
+import gov.nasa.jpf.vm.MJIEnv;
+import gov.nasa.jpf.vm.ThreadInfo;
+import gov.nasa.jpf.vm.Types;
 
 /**
  * Generic Description of Abstract Classes in AIL and AJPF
@@ -64,6 +67,7 @@ import gov.nasa.jpf.jvm.Types;
  * Represents a Predicate in First-Order Logic.
  */
 public class Abstract_Predicate implements Abstract_Term, Abstract_Formula {
+	static HashMap<String,Integer> strings = new HashMap<String,Integer>();
 	
 	/**
 	 * The functor.
@@ -189,7 +193,13 @@ public class Abstract_Predicate implements Abstract_Term, Abstract_Formula {
 	 */
 	public int newJPFObject(MJIEnv env) {
 		int ref = env.newObject("ail.syntax.ast.Abstract_Predicate");
-		env.setReferenceField(ref, "functor", env.newString(functor));
+		if (strings.containsKey(functor)) {
+			env.setReferenceField(ref, "functor", strings.get(functor));
+		} else {
+			int stringref = env.newString(functor);
+			strings.put(functor, stringref);
+			env.setReferenceField(ref, "functor", stringref);
+		}
 		env.setReferenceField(ref, "terms", newJPFTermArray(env));
 		return ref;
 
@@ -212,16 +222,16 @@ public class Abstract_Predicate implements Abstract_Term, Abstract_Formula {
 	 * (non-Javadoc)
 	 * @see ajpf.psl.ast.Abstract_MCAPLTerm#createInJPF(gov.nasa.jpf.jvm.JVM)
 	 */
-	public int createInJPF(JVM vm) {
+	public int createInJPF(VM vm) {
 		Heap heap = vm.getHeap();
-		ThreadInfo ti = vm.getLastThreadInfo();
-		ClassInfo ci = ClassInfo.getResolvedClassInfo("ail.syntax.ast.Abstract_Predicate");
-		int objref = heap.newObject(ci, ti);
-		ElementInfo ei = vm.getElementInfo(objref);
-		ei.setReferenceField("functor", heap.newString(functor, vm.getLastThreadInfo()));
+		ThreadInfo ti = vm.getCurrentThread();
+		ClassInfo ci = ClassLoaderInfo.getCurrentClassLoader().getResolvedClassInfo("ail.syntax.ast.Abstract_Predicate");
+		ElementInfo ei = heap.newObject(ci, ti);
+		int objref = ei.getObjectRef();
+		ei.setReferenceField("functor", heap.newString(functor, ti).getObjectRef());
   	    String elementClsName = Types.getTypeSignature("ail.syntax.ast.Abstract_Term", false);
-	    int aRef = heap.newArray(elementClsName, terms.length, ti);
-		ElementInfo array_ei = vm.getElementInfo(aRef);
+		ElementInfo array_ei = heap.newArray(elementClsName, terms.length, ti);
+		int aRef = array_ei.getObjectRef();
 		for (int index = 0; index < terms.length; index++) {
 			array_ei.setReferenceElement(index, terms[index].createInJPF(vm));
 		}
